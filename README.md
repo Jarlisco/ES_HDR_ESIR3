@@ -21,8 +21,6 @@ Run python file
 
 # CLI
 
-Awesome CLI user manager.
-
 **Usage**:
 
 ```console
@@ -37,32 +35,32 @@ $ [OPTIONS] COMMAND [ARGS]...
 
 **Commands**:
 
-* `crf-hdr-tmo-ldr`: Uses images of diffrent exposure to create...
-* `hdr-tmo-durand`: We tried to implement and homemade Durand...
-* `hdr-tmo-exp`: Tone map HDR images using exponential...
-* `hdr-tmo-gamma`: Tone map HDR images using gamma operator.
-* `hdr-tmo-ldr`
-* `hdr-tmo-local`: This a local based method to tone map HDR...
-* `hdr-tmo-log`: Tone map HDR images using log operator.
-* `hdr-tmo-norm`: Tone map HDR images by norming aroung the...
-* `ldr-fusion-ldr`
+* `crf-to-hdr`: Uses images of diffrent exposure to create...
+* `hdr-to-ldr`: Tone mapping HDR image to LDR using opencv...
+* `ldr-to-hqldr`: Fusion of mutiple LDR images to create an...
 
-## `crf-hdr-tmo-ldr`
+* `hdr-tmo-durand`: ~ Tone map using homemade Durand tone mapper.
+* `hdr-tmo-exp`: ~ Tone map HDR images using exponential...
+* `hdr-tmo-gamma`: ~ Tone map HDR images using gamma operator.
+* `hdr-tmo-local`: ~ Tone map using a local based method.
+* `hdr-tmo-log`: ~ Tone map HDR images using log operator.
+* `hdr-tmo-norm`: ~ Tone map HDR images by norming aroung the...
+
+
+## `crf-to-hdr`
 
 Uses images of diffrent exposure to create HDR image and then it is tone mapped to let you see the result.
 
 **Usage**:
 
 ```console
-$ crf-hdr-tmo-ldr [OPTIONS] [FUSION_TYPE] PATHPREFIX COUNT EXTENSION
+$ crf-to-hdr [OPTIONS] [FUSION_TYPE] PATHS_AND_EXPOSURES...
 ```
 
 **Arguments**:
 
-* `[FUSION_TYPE]`: Choose between debevec or mentens fusion.  [default: debevec]
-* `PATHPREFIX`: Path prefix to images to merge. Path prefix is then completed with a number and the file extension ex: .img/img(1.jpg)  [required]
-* `COUNT`: Number of images to merge. It will complete the path prefix starting from 1 to 'count' included.  [required]
-* `EXTENSION`: Image file extension it will complete the path prefix  [required]
+* `[FUSION_TYPE]`: Choose between debevec or mertens fusion.  [default: debevec]
+* `PATHS_AND_EXPOSURES...`: List of paths to images to merge along with list of exposure times of each images in the same order. Ex: im1.jpg im2.jpg 0.005 0.015  [required]
 
 **Options**:
 
@@ -70,8 +68,8 @@ $ crf-hdr-tmo-ldr [OPTIONS] [FUSION_TYPE] PATHPREFIX COUNT EXTENSION
 
 ## `hdr-tmo-durand`
 
-We tried to implement and homemade Durand tone mapping. 
-It uses bilateral filtering and base logarithme (log2).
+~ Tone map using homemade Durand tone mapper. 
+It uses bilateral filtering and logarithme base 2 (log2).
 
 **Usage**:
 
@@ -89,7 +87,7 @@ $ hdr-tmo-durand [OPTIONS] FN
 
 ## `hdr-tmo-exp`
 
-Tone map HDR images using exponential operator.
+~ Tone map HDR images using exponential operator.
 
 **Usage**:
 
@@ -109,7 +107,7 @@ $ hdr-tmo-exp [OPTIONS] FN K Q
 
 ## `hdr-tmo-gamma`
 
-Tone map HDR images using gamma operator.
+~ Tone map HDR images using gamma operator.
 
 **Usage**:
 
@@ -126,27 +124,9 @@ $ hdr-tmo-gamma [OPTIONS] FN GAMMA
 
 * `--help`: Show this message and exit.
 
-## `hdr-tmo-ldr`
-
-**Usage**:
-
-```console
-$ hdr-tmo-ldr [OPTIONS] NAME FN GAMMA
-```
-
-**Arguments**:
-
-* `NAME`: [required]
-* `FN`: [required]
-* `GAMMA`: [required]
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
 ## `hdr-tmo-local`
 
-This a local based method to tone map HDR images.
+~ Tone map using a local based method.
 It uses local luminance normalization.
 
 **Usage**:
@@ -166,7 +146,7 @@ $ hdr-tmo-local [OPTIONS] FN [ALPHA]
 
 ## `hdr-tmo-log`
 
-Tone map HDR images using log operator.
+~ Tone map HDR images using log operator.
 
 **Usage**:
 
@@ -186,7 +166,7 @@ $ hdr-tmo-log [OPTIONS] FN K Q
 
 ## `hdr-tmo-norm`
 
-Tone map HDR images by norming aroung the maximum of luminance.
+~ Tone map HDR images by norming aroung the maximum of luminance.
 
 **Usage**:
 
@@ -202,18 +182,42 @@ $ hdr-tmo-norm [OPTIONS] FN
 
 * `--help`: Show this message and exit.
 
-## `ldr-fusion-ldr`
+## `hdr-to-ldr`
+
+Tone mapping HDR image to LDR using opencv implemented tone mappers.
 
 **Usage**:
 
 ```console
-$ ldr-fusion-ldr [OPTIONS] [FUSION_TYPE]
+$ hdr-to-ldr [OPTIONS] [TONE_MAPPER] PATH GAMMA
 ```
 
 **Arguments**:
 
-* `[FUSION_TYPE]`: [default: debevec]
+* `[TONE_MAPPER]`: Choose your tone mapper (mantiuk or reinhard)  [default: mantiuk]
+* `PATH`: Path to HDR image.  [required]
+* `GAMMA`: It is THE gamma.  [required]
 
 **Options**:
 
 * `--help`: Show this message and exit.
+
+## `ldr-to-hqldr`
+
+Fusion of mutiple LDR images to create an High Quality LDR image (HQLDR).
+
+**Usage**:
+
+```console
+$ ldr-to-hqldr [OPTIONS] [FUSION_TYPE] PATHS...
+```
+
+**Arguments**:
+
+* `[FUSION_TYPE]`: Choose your fusion algorithm (only mertens is available for now).  [default: mertens]
+* `PATHS...`: List of paths to images to merge.  [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+

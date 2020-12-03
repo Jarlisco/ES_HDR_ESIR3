@@ -2,12 +2,14 @@ import cv2 as cv
 import numpy as np
 
 
-def CRF_merge_Debevec(prefix,count,extension):
+#==================================================
+# RESULTAT 1 :  CRF à partir des expo -> HDR -> TMO
+#==================================================
+def CRF_merge_Debevec(paths,exposures):
     # Loading exposure images into a list
-    img_fn = [prefix+str(i)+"."+extension for i in range(1,count+1)]
-
-    img_list = [cv.imread(fn) for fn in img_fn]
-    exposure_times = np.array([1./80, 1./25, 1./200], dtype=np.float32)
+    img_fn = paths
+    img_list = [cv.imread(str(fn)) for fn in img_fn]
+    exposure_times = np.array(exposures, dtype=np.float32)
 
     # Merge exposures to HDR image
     merge_debevec = cv.createMergeDebevec()
@@ -19,13 +21,13 @@ def CRF_merge_Debevec(prefix,count,extension):
 
     # Convert datatype to 8-bit and save
     res_debevec_8bit = np.clip(res_debevec*255, 0, 255).astype('uint8')
-    cv.imwrite("img/ldr_debevec.jpg", res_debevec_8bit)
+    cv.imwrite("img/LDR_debevec.jpg", res_debevec_8bit)
 
-def CRF_merge_Robertson(prefix,count,extension):
+def CRF_merge_Robertson(paths,exposures):
     # Loading exposure images into a list
-    img_fn = [prefix+str(i)+"."+extension for i in range(1,count+1)]
-    img_list = [cv.imread(fn) for fn in img_fn]
-    exposure_times = np.array([1./80, 1./25, 1./200], dtype=np.float32)
+    img_fn = paths
+    img_list = [cv.imread(str(fn)) for fn in img_fn]
+    exposure_times = np.array(exposures, dtype=np.float32)
 
     # Merge exposures to HDR image
     merge_Robertson = cv.createMergeRobertson()
@@ -37,12 +39,15 @@ def CRF_merge_Robertson(prefix,count,extension):
 
     # Convert datatype to 8-bit and save
     res_Robertson_8bit = np.clip(res_Robertson*255, 0, 255).astype('uint8')
-    cv.imwrite("img/ldr_robertson.jpg", res_Robertson_8bit)
+    cv.imwrite("img/LDR_robertson.jpg", res_Robertson_8bit)
 
-def LDR_fusion_Mertens():
+#==================================================
+# RESULTAT 2 : Fusion directe des LDRs pour obtenir
+#              une LDR haute qualité.
+#==================================================
+def LDR_fusion_Mertens(paths):
     # Loading exposure images into a list
-    img_fn = ["img/img1.jpg", "img/img2.jpg", "img/img3.jpg"]
-    img_list = [cv.imread(fn) for fn in img_fn]
+    img_list = [cv.imread(str(fn)) for fn in paths]
     
     # Exposure fusion using Mertens
     merge_mertens = cv.createMergeMertens()
@@ -52,6 +57,10 @@ def LDR_fusion_Mertens():
     res_mertens_8bit = np.clip(res_mertens*255, 0, 255).astype('uint8')
     cv.imwrite("img/fusion_mertens.jpg", res_mertens_8bit)
 
+#=================================================
+# RESULTAT 3 : TMO d'une image HDR avec la méthode
+#              de Mantiuk ou Reinhard.
+#=================================================
 def HDR_TMO_Mantiuk(fn,g):
     hdr_image = cv.imread(fn, cv.IMREAD_ANYDEPTH)
     tonemap = cv.createTonemapMantiuk(gamma=g)
@@ -66,10 +75,10 @@ def HDR_TMO_Reinhard(fn,g):
     result_8bit = np.clip(result*255, 0, 255).astype('uint8')
     cv.imwrite("img/TMO_Reinhard.jpg", result_8bit)
 
-#===========================
-# Opérateurs de tone mapping
-#===========================
-
+#=====================================================
+# RESULTAT 4 : Implémentation de différents opérateurs
+#              de tone mapping.
+#=====================================================
 def TMO_norm(fn):
 
     # lecture de l'image    
@@ -182,6 +191,10 @@ def TMO_local(fn, alpha):
     
     return
 
+#===============================================
+# RESULTAT 6 : Implémentation à la main du tone
+#              mapping de Durand.
+#===============================================
 def TMO_durand(fn):
 
     # lecture de l'image
