@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pylint = "*"
+opencv-contrib-python = "*"
+typer = "*"
+pathlib = "*"
+typing = "*"
+typer-cli = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
