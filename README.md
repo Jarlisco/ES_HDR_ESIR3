@@ -11,13 +11,13 @@ tone mapping HDR images to display it on your screen.
 
 
 To install this project with it's virtual env you will need pipenv:
-- pip install pipenv
-In the project folder, you should see a Pipfile
-- pipenv install -> to install the env and requirements
-Start a new shell using this env
-- pipenv shell
+* `pip install pipenv`
+In the project folder, you should see a Pipfile, to install the requirements:
+* `pipenv install`
+Next start a new shell using this env
+* `pipenv shell`
 Run python file
-- python run.py
+* `python run.py --help`
 
 # CLI
 
