@@ -16,6 +16,7 @@ In the project folder, you should see a Pipfile, to install the requirements:
 * `pipenv install`
 Next start a new shell using this env
 * `pipenv shell`
+
 Run python file
 * `python run.py --help`
 
