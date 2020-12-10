@@ -43,16 +43,15 @@ $ [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 * `crf-to-hdr`: Uses images of diffrent exposure to create...
-* `hdr-to-ldr`: Tone mapping HDR image to LDR using opencv...
-* `ldr-to-hqldr`: Fusion of mutiple LDR images to create an...
-
 * `hdr-tmo-durand`: ~ Tone map using homemade Durand tone mapper.
 * `hdr-tmo-exp`: ~ Tone map HDR images using exponential...
 * `hdr-tmo-gamma`: ~ Tone map HDR images using gamma operator.
 * `hdr-tmo-local`: ~ Tone map using a local based method.
 * `hdr-tmo-log`: ~ Tone map HDR images using log operator.
 * `hdr-tmo-norm`: ~ Tone map HDR images by norming aroung the...
-
+* `hdr-to-ldr`: Tone mapping HDR image to LDR using opencv...
+* `ldr-to-hqldr`: Fusion of mutiple LDR images to create an...
+* `xgenerate-all`: For debug purposes you can generate all...
 
 ## `crf-to-hdr`
 
@@ -99,14 +98,14 @@ $ hdr-tmo-durand [OPTIONS] FN
 **Usage**:
 
 ```console
-$ hdr-tmo-exp [OPTIONS] FN K Q
+$ hdr-tmo-exp [OPTIONS] FN [K] [Q]
 ```
 
 **Arguments**:
 
 * `FN`: Path to HDR image.  [required]
-* `K`: Luminance multiplier.  [required]
-* `Q`: Average Luminance mitiplier.  [required]
+* `[K]`: Luminance multiplier.  [default: 1.0]
+* `[Q]`: Average Luminance mitiplier.  [default: 1.0]
 
 **Options**:
 
@@ -145,7 +144,7 @@ $ hdr-tmo-local [OPTIONS] FN [ALPHA]
 **Arguments**:
 
 * `FN`: Path to hdr image file.  [required]
-* `[ALPHA]`: 1-alpha is luminance denominator exponent  [default: 1.0]
+* `[ALPHA]`: 1-alpha is luminance denominator exponent (for blurred luminance image)  [default: 1.0]
 
 **Options**:
 
@@ -158,14 +157,14 @@ $ hdr-tmo-local [OPTIONS] FN [ALPHA]
 **Usage**:
 
 ```console
-$ hdr-tmo-log [OPTIONS] FN K Q
+$ hdr-tmo-log [OPTIONS] FN [K] [Q]
 ```
 
 **Arguments**:
 
 * `FN`: Path to hdr image file.  [required]
-* `K`: Luminance multiplier.  [required]
-* `Q`: Max Luminance multiplier.  [required]
+* `[K]`: Luminance multiplier.  [default: 1.0]
+* `[Q]`: Max Luminance multiplier.  [default: 1.0]
 
 **Options**:
 
@@ -223,6 +222,21 @@ $ ldr-to-hqldr [OPTIONS] [FUSION_TYPE] PATHS...
 
 * `[FUSION_TYPE]`: Choose your fusion algorithm (only mertens is available for now).  [default: mertens]
 * `PATHS...`: List of paths to images to merge.  [required]
+
+**Options**:
+
+* `--help`: Show this message and exit.
+
+## `xgenerate-all`
+
+For debug purposes you can generate all images using default parameters.
+You need img1.jpg img2.jpg img3.jpg and 272_HDR2.hdr.
+
+**Usage**:
+
+```console
+$ xgenerate-all [OPTIONS]
+```
 
 **Options**:
 

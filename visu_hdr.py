@@ -85,6 +85,7 @@ def TMO_norm(fn):
     hdr_image = cv.imread(fn, cv.IMREAD_ANYDEPTH)
 
     # Je resize l'image car je ne sais pas coder en python
+    # et si je le fais pas c'est très lent
     small_to_large_image_size_ratio = 0.2
     tone_img = cv.resize(hdr_image, # original image
                         (0,0), # set fx and fy, not the final size
@@ -174,11 +175,11 @@ def TMO_local(fn, alpha):
     # lecture de l'image
     hdr_image = cv.imread(fn, cv.IMREAD_ANYDEPTH)
 
-    #
-    hdr_image_vec = hdr_image[:]
-    vec = [0.2126, 0.7152, 0.0722]
-    L_array = np.dot(hdr_image,vec)
-    V_array = cv.GaussianBlur(L_array,(15,15),-1)
+    # Compute luminance
+    hdr_image_vec = hdr_image[:] # we vectorize the hdr image for better performance
+    vec = [0.2126, 0.7152, 0.0722] # we compute luminance = R * 0.2126 + G * 0.7152 + B * 0.0722
+    L_array = np.dot(hdr_image,vec) # Lumiannce array
+    V_array = cv.GaussianBlur(L_array,(15,15),-1) # blurring
     
     itm = np.divide(L_array, np.power(V_array, 1-alpha))
     hdr_image_vec *= itm[..., np.newaxis] / L_array[..., np.newaxis]  # new luminance for each pixel
@@ -198,26 +199,29 @@ def TMO_local(fn, alpha):
 def TMO_durand(fn):
 
     # lecture de l'image
-    hdr_image = cv.imread(fn, cv.IMREAD_ANYDEPTH)
+    hdr_image       = cv.imread(fn, cv.IMREAD_ANYDEPTH)
     target_contrast = np.log2(10)
-    #
-    hdr_image_vec = hdr_image[:]
-    vec = [0.2126, 0.7152, 0.0722]
-    L_array = np.dot(hdr_image,vec)
-    L_array_log = np.log2(np.dot(hdr_image,vec))
+    
+    # Extracting large scale and détails
+    hdr_image_vec = hdr_image[:] # we vectorize the hdr image for better performance
+    vec = [0.2126, 0.7152, 0.0722] # we compute luminance = R * 0.2126 + G * 0.7152 + B * 0.0722
+    L_array = np.dot(hdr_image,vec) # Luminance array
+    L_array_log = np.log2(np.dot(hdr_image,vec)) # log luminance array
 
     large_scale = cv.bilateralFilter(L_array_log.astype('float32'),-1,2,2)
     details = L_array_log - large_scale
 
-    max_L = np.max(large_scale)
-    k = target_contrast / (max_L - np.min(large_scale))
+
+    max_L = np.max(large_scale) # max luminance from large scale
+    k = target_contrast / (max_L - np.min(large_scale)) # global scalar 
     offset = max_L * k
     out_log = details + large_scale * k - offset
 
-    O = np.exp(out_log + details)
+    out = np.exp(out_log + details)
 
-    itm = np.divide(L_array, O)
-    hdr_image_vec *= itm[..., np.newaxis] / L_array[..., np.newaxis]  # new luminance for each pixel
+    itm = np.divide(L_array, out) # tone map
+
+    hdr_image_vec *= itm[..., np.newaxis] / L_array[..., np.newaxis]  # new luminance for each pixel notice *=
 
     # Conversion et sauvegarde
     result_8bit = np.clip(hdr_image_vec*255, 0, 255).astype('uint8')

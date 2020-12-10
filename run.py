@@ -3,17 +3,48 @@ from typing import List
 from pathlib import Path
 from colorama import Fore, Back
 import numpy as np
-#import visu_hdr
+import visu_hdr
 
 #===============================================
 app = typer.Typer()
+
+#===============================================
+# DEBUG :  Utilise toutes les commandes avec des
+#          paramètres par défaut
+#===============================================
+@app.command()
+def xGENERATE_ALL():
+
+    """
+    For debug purposes you can generate all images using default parameters.
+    You need img1.jpg img2.jpg img3.jpg and 272_HDR2.hdr.
+    """
+
+    paths = [".\\img\\img1.jpg", ".\\img\\img2.jpg", ".\\img\\img3.jpg"]
+    exposures = [1./80,1./25,1./200]
+    fn = ".\\img\\272_HDR2.hdr"
+
+    visu_hdr.CRF_merge_Debevec(   paths, exposures )
+    visu_hdr.CRF_merge_Robertson( paths, exposures )
+    visu_hdr.LDR_fusion_Mertens(  paths            )
+
+    visu_hdr.HDR_TMO_Mantiuk(   str(fn), 1.3 )
+    visu_hdr.HDR_TMO_Reinhard(  str(fn), 1.3 )
+
+    visu_hdr.TMO_norm(   str(fn)        )
+    visu_hdr.TMO_gamma(  str(fn), 2 )
+    visu_hdr.TMO_exp(    str(fn), 1, 1  )
+    visu_hdr.TMO_log(    str(fn), 1, 1  )
+    visu_hdr.TMO_local(  str(fn), 1.5 )
+    visu_hdr.TMO_durand( str(fn)        )
+
 
 #==================================================
 # RESULTAT 1 :  CRF à partir des expo -> HDR -> TMO
 #==================================================
 @app.command()
 def CRF_to_HDR(fusion_type : str = typer.Argument("debevec", help="Choose between debevec or mertens fusion."),
-                    paths_and_exposures  : List[str] = typer.Argument(..., help="List of paths to images to merge along with list of exposure times of each images in the same order. Ex: im1.jpg im2.jpg 0.005 0.015")):
+               paths_and_exposures  : List[str] = typer.Argument(..., help="List of paths to images to merge along with list of exposure times of each images in the same order. Ex: im1.jpg im2.jpg 0.005 0.015")):
 
     
     """
@@ -155,8 +186,8 @@ def HDR_TMO_gamma(fn : Path  = typer.Argument(..., help="Path to HDR image."),
 #===============================================
 @app.command()
 def HDR_TMO_exp(fn : Path  = typer.Argument(..., help="Path to HDR image."),
-                k : float = typer.Argument(..., help="Luminance multiplier."),
-                q : float = typer.Argument(..., help="Average Luminance mitiplier.")):
+                k : float = typer.Argument(1., help="Luminance multiplier."),
+                q : float = typer.Argument(1., help="Average Luminance mitiplier.")):
     
     """
     ~ Tone map HDR images using exponential operator.
@@ -173,8 +204,8 @@ def HDR_TMO_exp(fn : Path  = typer.Argument(..., help="Path to HDR image."),
 #===============================================
 @app.command()
 def HDR_TMO_log(fn : Path = typer.Argument(..., help="Path to hdr image file."),
-                k : float = typer.Argument(..., help="Luminance multiplier."),
-                q : float = typer.Argument(..., help="Max Luminance multiplier.")):
+                k : float = typer.Argument(1., help="Luminance multiplier."),
+                q : float = typer.Argument(1., help="Max Luminance multiplier.")):
     
     """
     ~ Tone map HDR images using log operator.
@@ -191,7 +222,7 @@ def HDR_TMO_log(fn : Path = typer.Argument(..., help="Path to hdr image file."),
 #===============================================
 @app.command()
 def HDR_TMO_local(fn    : Path  = typer.Argument(..., help="Path to hdr image file."),
-                  alpha : float = typer.Argument(1., help="1-alpha is luminance denominator exponent")):
+                  alpha : float = typer.Argument(1., help="1-alpha is luminance denominator exponent (for blurred luminance image)")):
     
     """
     ~ Tone map using a local based method.
@@ -220,7 +251,7 @@ def HDR_TMO_durand(fn : Path = typer.Argument(..., help="Path to hdr image file.
 
     if fn.is_file() and fn.suffix == ".hdr":
         typer.echo(Fore.CYAN + "Doing homemade Durand tone mapping." + Fore.RESET)
-        visu_hdr.TMO_durand(path(fn))
+        visu_hdr.TMO_durand(str(fn))
         typer.echo(Fore.CYAN + "HDR Tone Mapped and saved as TMO_durand.jpg." + Fore.RESET)
 
     else:
