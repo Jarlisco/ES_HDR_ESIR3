@@ -31,12 +31,12 @@ def xGENERATE_ALL():
     visu_hdr.HDR_TMO_Mantiuk(   str(fn), 1.3 )
     visu_hdr.HDR_TMO_Reinhard(  str(fn), 1.3 )
 
-    visu_hdr.TMO_norm(   str(fn)        )
-    visu_hdr.TMO_gamma(  str(fn), 2 )
-    visu_hdr.TMO_exp(    str(fn), 1, 1  )
-    visu_hdr.TMO_log(    str(fn), 1, 1  )
-    visu_hdr.TMO_local(  str(fn), 1.5 )
-    visu_hdr.TMO_durand( str(fn)        )
+    visu_hdr.TMO_norm(   str(fn)       )
+    visu_hdr.TMO_gamma(  str(fn), 1.3  )
+    visu_hdr.TMO_exp(    str(fn), 1, 1 )
+    visu_hdr.TMO_log(    str(fn), 5, 10 )
+    visu_hdr.TMO_local(  str(fn), 0.8    )
+    visu_hdr.TMO_durand( str(fn)       )
 
 
 #==================================================
@@ -54,7 +54,7 @@ def CRF_to_HDR(fusion_type : str = typer.Argument("debevec", help="Choose betwee
     paths = []
     exposures = []
 
-    if fusion_type == "debevec" or fusion_type == "mertens" : 
+    if fusion_type == "debevec" or fusion_type == "robertson" : 
 
         #==================================================================
         try:
@@ -238,7 +238,7 @@ def HDR_TMO_local(fn    : Path  = typer.Argument(..., help="Path to hdr image fi
         typer.echo(Fore.RED + "File doesn't exist or is not .hdr file." + Fore.RESET)
 
 #===============================================
-# RESULTAT 6 : Implémentation à la main du tone
+# RESULTAT 5 : Implémentation à la main du tone
 #              mapping de Durand.
 #===============================================
 @app.command()

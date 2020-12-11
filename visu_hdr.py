@@ -193,7 +193,7 @@ def TMO_local(fn, alpha):
     return
 
 #===============================================
-# RESULTAT 6 : Implémentation à la main du tone
+# RESULTAT 5 : Implémentation à la main du tone
 #              mapping de Durand.
 #===============================================
 def TMO_durand(fn):
